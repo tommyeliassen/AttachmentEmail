@@ -5,15 +5,15 @@
  * Modified from a version created at http://www.kavoir.com/2009/08/php-email-attachment-class.html
 **/
 class AttachmentEmail {
-	private $from = '';
-	private $from_name = '';
-	private $reply_to = '';
-	private $to = '';
-	private $subject = '';
-	private $message = '';
-	private $attachments = '';
+  private $from = '';
+  private $from_name = '';
+  private $reply_to = '';
+  private $to = '';
+  private $subject = '';
+  private $message = '';
+  private $attachments = '';
 
-	
+  
 
   /**
    * Function for defining email
@@ -28,12 +28,12 @@ class AttachmentEmail {
    *    array(array('filename' => 'attachment.pdf', 'uri' => '/tmp/attachment.pdf'))
  **/
   public function __construct ($to, $from, $subject, $message, $attachments = array()) {
-		$this->to = $to;
+    $this->to = $to;
     $this->from = $from;
-		$this->subject = $subject;
-		$this->message = $message;
-		$this->attachments = $attachments;
-	}
+    $this->subject = $subject;
+    $this->message = $message;
+    $this->attachments = $attachments;
+  }
 
 
 
@@ -42,84 +42,84 @@ class AttachmentEmail {
   **/
   public function send() {
     
-		if (is_array ($this->attachments) && !empty ($this -> attachments)) {
+    if (is_array ($this->attachments) && !empty ($this -> attachments)) {
 
-  		$attachment_content = '';
+      $attachment_content = '';
 
-			// Set a unique identifier
-			$semi_rand = md5(time()); 
-			$mime_boundary = "==Multipart_Boundary_x{$semi_rand}x";
+      // Set a unique identifier
+      $semi_rand = md5(time()); 
+      $mime_boundary = "==Multipart_Boundary_x{$semi_rand}x";
 
-		  foreach ($this->attachments as $attachment) {
-  		  // Check filename
-		    $attachment['filename'] = (empty ($attachment['filename'])) ? basename ($file_url) : $attachment['filename'];
+      foreach ($this->attachments as $attachment) {
+        // Check filename
+        $attachment['filename'] = (empty ($attachment['filename'])) ? basename ($file_url) : $attachment['filename'];
 
-        // Find mime type of file		
-	      $attachment['filemime'] = $this->getMimeType ($attachment['filename']);
-		    
-		    // Get content of file ready for sending
-		    $data  = file_get_contents ($attachment['uri']);
-		    $data  = chunk_split (base64_encode ($data));
-		    
-		    $attachment_content .= "Content-Type: \"application/octet-stream\";\n";
+        // Find mime type of file    
+        $attachment['filemime'] = $this->getMimeType ($attachment['filename']);
+        
+        // Get content of file ready for sending
+        $data  = file_get_contents ($attachment['uri']);
+        $data  = chunk_split (base64_encode ($data));
+        
+        $attachment_content .= "Content-Type: \"application/octet-stream\";\n";
         $attachment_content .= " name=\"" . $attachment['filename'] . "\"\n";
         $attachment_content .= "Content-Disposition: attachment;\n";
         $attachment_content .= " filename=\"" . $attachment['filename'] . "\"\n";
         $attachment_content .= "Content-Transfer-Encoding: base64\n\n" . $data . "\n\n";
         $attachment_content .= "--{$mime_boundary}\n";
-		  }
+      }
 
-		  // Set basic stuff for mail
-			$mailto    = $this->to;
-			$from_mail = $this->from;
-			$from_name = $this->from_name;
-			$replyto   = $this->reply_to;
-			$subject   = $this->subject;
-			$msg       = $this->message;
+      // Set basic stuff for mail
+      $mailto    = $this->to;
+      $from_mail = $this->from;
+      $from_name = $this->from_name;
+      $replyto   = $this->reply_to;
+      $subject   = $this->subject;
+      $msg       = $this->message;
 
-			// Create mail header
-			$headers = "From: " . $from_mail;
-			$headers .= "\nMIME-Version: 1.0\r\n";
-			$headers .= "Content-Type: multipart/mixed;\n";
-			$headers .= " boundary=\"{$mime_boundary}\"";
+      // Create mail header
+      $headers = "From: " . $from_mail;
+      $headers .= "\nMIME-Version: 1.0\r\n";
+      $headers .= "Content-Type: multipart/mixed;\n";
+      $headers .= " boundary=\"{$mime_boundary}\"";
 
-			$message = "\n\n--{$mime_boundary}\n";
-			$message .="Content-Type: text/plain; charset=\"UTF-8\"\n";
+      $message = "\n\n--{$mime_boundary}\n";
+      $message .="Content-Type: text/plain; charset=\"UTF-8\"\n";
       $message .="Content-Transfer-Encoding: 7bit\n\n" . $msg . "\n\n";
       $message .= "--{$mime_boundary}\n";
       $message .= $attachment_content;
-      			
-			if (mail($mailto, $subject, $message, $headers)) {
-				return true;
-			}
+            
+      if (mail($mailto, $subject, $message, $headers)) {
+        return true;
+      }
       else {
-				return false;
-			}
-		} else {
-			$header = "From: ".($this -> from_name)." <".($this -> from).">\r\n";
-			$header .= "Reply-To: ".($this -> reply_to)."\r\n";
-			$header .= "Bcc: " . $this -> bcc . "\r\n";
+        return false;
+      }
+    } else {
+      $header = "From: ".($this -> from_name)." <".($this -> from).">\r\n";
+      $header .= "Reply-To: ".($this -> reply_to)."\r\n";
+      $header .= "Bcc: " . $this -> bcc . "\r\n";
 
-			if (mail($this -> to, $this -> subject, $this -> message, $header)) {
-				return true;
-			} else {
+      if (mail($this -> to, $this -> subject, $this -> message, $header)) {
+        return true;
+      } else {
 
-				return false;
-			}
+        return false;
+      }
 
-		}
-	}
-	
-	
-	
-	/**
-	 * Return file mime type
-	 *
-	 * @param string
-	 * @return mixed
-	 *   string if mime type found, false if not
-	 */
-	public function getMimeType ($file) {
+    }
+  }
+  
+  
+  
+  /**
+   * Return file mime type
+   *
+   * @param string
+   * @return mixed
+   *   string if mime type found, false if not
+   */
+  public function getMimeType ($file) {
     // MIME types array
     $mimeTypes = array (
       "323"   => "text/h323",

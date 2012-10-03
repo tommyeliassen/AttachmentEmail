@@ -13,7 +13,7 @@ class AttachmentEmail {
 	private $message = '';
 	private $attachments = '';
 
-
+	
 
   /**
    * Function for defining email
